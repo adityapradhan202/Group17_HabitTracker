@@ -1,0 +1,140 @@
+@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Create your account</h1>
+        <p class="mb-0">
+            Start tracking habits, reviewing progress, and organizing your routine in one clean workspace.
+        </p>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+
+    <div class="col-12">
+        <section class="panel auth-hero-panel">
+            <div class="text-soft mb-2">HabitTracker</div>
+            <h2 class="auth-hero-title">Create your account and build stronger daily routines.</h2>
+            <p class="auth-hero-text mb-0">
+                Keep your habits in one place, review progress in calendar view, and manage activity flow through a simple kanban board.
+            </p>
+        </section>
+    </div>
+
+    <div class="col-12">
+        <div class="summary-grid auth-feature-grid">
+            <div class="stat-card">
+                <div class="stat-label">Focused workspace</div>
+                <div class="stat-value">✨</div>
+                <div class="stat-hint">Clean interface for consistent habit tracking</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Personal data</div>
+                <div class="stat-value">👤</div>
+                <div class="stat-hint">Users manage only their own habits</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Progress views</div>
+                <div class="stat-value">📈</div>
+                <div class="stat-hint">Dashboard, calendar, and kanban in one place</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Quick start</div>
+                <div class="stat-value">🚀</div>
+                <div class="stat-hint">Register and start immediately</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <section class="panel auth-form-panel">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5">
+                    <div class="text-soft mb-2">New account</div>
+                    <h2 class="mb-2">Register</h2>
+                    <p class="mb-0">
+                        Create a local account to start using HabitTracker.
+                    </p>
+                </div>
+
+                <div class="col-lg-7">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input asp-for="Input.Email"
+                                   class="form-control"
+                                   autocomplete="username"
+                                   placeholder="Enter your email" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label"></label>
+                            <input asp-for="Input.Password"
+                                   class="form-control"
+                                   autocomplete="new-password"
+                                   placeholder="Create a password" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                            <input asp-for="Input.ConfirmPassword"
+                                   class="form-control"
+                                   autocomplete="new-password"
+                                   placeholder="Confirm your password" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <button id="registerSubmit" type="submit" class="btn btn-primary">
+                                Create account
+                            </button>
+
+                            <a asp-page="./Login"
+                               asp-route-returnUrl="@Model.ReturnUrl"
+                               class="btn btn-outline-primary">
+                                Back to login
+                            </a>
+                        </div>
+                    </form>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="stat-card auth-mini-card">
+                                <div class="stat-label">After registration</div>
+                                <div class="stat-hint mb-0">
+                                    Create habits, track daily progress, and manage your workflow in calendar and kanban views.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="stat-card auth-mini-card">
+                                <div class="stat-label">Your data</div>
+                                <div class="stat-hint mb-0">
+                                    Only your own records are available in your personal workspace.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,39 @@
+@page
+@model LogoutModel
+
+@{
+    ViewData["Title"] = "Log out";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Log out</h1>
+        <p class="mb-0">You are about to sign out from your account.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-xl-6 col-lg-8">
+        <section class="panel text-center">
+            <div class="mb-3 text-soft">HabitTracker</div>
+
+            <h2 class="mb-3">Are you sure you want to log out?</h2>
+
+            <p class="mb-4">
+                You will need to log in again to access your habits, calendar, and dashboard.
+            </p>
+
+            <form method="post">
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <button type="submit" class="btn btn-primary">
+                        Yes, log me out
+                    </button>
+
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
