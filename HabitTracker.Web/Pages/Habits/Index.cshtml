@@ -1,0 +1,105 @@
+@page
+@model HabitTracker.Web.Pages.Habits.IndexModel
+@{
+    ViewData["Title"] = "My Habits";
+    var habits = Model.Habits;
+    var total = habits.Count;
+    var active = habits.Count(h => h.Status == HabitStatus.Active);
+    var completed = habits.Count(h => h.Status == HabitStatus.Completed);
+}
+
+<div class="page-intro">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <p class="mb-0">Structured habit list with cleaner spacing, better actions, and clearer status overview.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success mb-4">@Model.SuccessMessage</div>
+}
+
+<div class="action-row">
+    <a asp-page="/Habits/Create" class="btn btn-primary">Create Habit</a>
+</div>
+
+<div class="stats-grid mb-4">
+    <div class="stat-card">
+        <div class="stat-label">Records in this view</div>
+        <div class="stat-value">@total</div>
+        <div class="stat-hint">Current list</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active habits</div>
+        <div class="stat-value">@active</div>
+        <div class="stat-hint">Still in progress</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed habits</div>
+        <div class="stat-value">@completed</div>
+        <div class="stat-hint">Finished items</div>
+    </div>
+</div>
+
+<section class="table-panel">
+    <div class="table-panel-header">
+        <div>
+            <h3 class="mb-1">Habit table</h3>
+            <div class="panel-note">Focused list view with cleaner row actions.</div>
+        </div>
+    </div>
+
+    @if (!habits.Any())
+    {
+        <div class="empty-state">No habits found. Click "Create Habit" to add your first habit.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-clean align-middle">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Frequency</th>
+                        <th>Status</th>
+                        <th>Kanban</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var habit in habits)
+                {
+                    <tr>
+                        <td>
+                            <div class="habit-title-cell">@habit.Title</div>
+                            @if (!string.IsNullOrWhiteSpace(habit.Description))
+                            {
+                                <div class="habit-subtext">@habit.Description</div>
+                            }
+                        </td>
+                        <td>@habit.Frequency</td>
+                        <td>
+                            <span class="badge-soft @(habit.Status == HabitStatus.Completed ? "badge-soft-success" : habit.Status == HabitStatus.Paused ? "badge-soft-warning" : "badge-soft-primary")">
+                                @habit.Status
+                            </span>
+                        </td>
+                        <td>@habit.KanbanStatus</td>
+                        <td>@habit.StartDate.ToShortDateString()</td>
+                        <td>@(habit.EndDate?.ToShortDateString() ?? "-")</td>
+                        <td>
+                            <div class="table-actions">
+                                <a asp-page="/Habits/Details" asp-route-id="@habit.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                                <a asp-page="/Habits/Edit" asp-route-id="@habit.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a asp-page="/Habits/Delete" asp-route-id="@habit.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

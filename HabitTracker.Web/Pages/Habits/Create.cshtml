@@ -1,0 +1,256 @@
+@page
+@model HabitTracker.Web.Pages.Habits.CreateModel
+@{
+    ViewData["Title"] = "Create Habit";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Create Habit</h1>
+        <p class="mb-0">Add a new daily or periodic routine to track your goals.</p>
+    </div>
+</div>
+
+<div class="auth-card">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <!-- Voice Habit Input Feature -->
+        <div class="voice-entry-container mb-4 p-3 border rounded bg-light d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="mb-1 d-flex align-items-center gap-2 text-primary">
+                    <i class="bi bi-mic-fill"></i> Fill Habit by Voice
+                </h5>
+                <p class="text-muted small mb-0">
+                    Click the microphone to describe your habit naturally (e.g. "Drink water, stays hydrated daily for 30 days").
+                </p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" id="btn-voice-input" class="btn btn-outline-primary d-flex align-items-center gap-2" title="Click to start listening">
+                    <i class="bi bi-mic"></i> <span>Start Listening</span>
+                </button>
+                <span id="voice-status" class="badge bg-secondary d-none">Listening...</span>
+            </div>
+        </div>
+        <div id="voice-error" class="alert alert-danger small py-2 d-none"></div>
+
+        <div class="mb-3">
+            <label asp-for="Habit.Title" class="form-label"></label>
+            <input asp-for="Habit.Title" class="form-control" placeholder="e.g., Morning Run" />
+            <span asp-validation-for="Habit.Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Habit.Description" class="form-label"></label>
+            <textarea asp-for="Habit.Description" class="form-control" placeholder="Describe your habit details..."></textarea>
+            <span asp-validation-for="Habit.Description" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Habit.Frequency" class="form-label"></label>
+                <select asp-for="Habit.Frequency" asp-items="Html.GetEnumSelectList<Frequency>()" class="form-select"></select>
+                <span asp-validation-for="Habit.Frequency" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="Habit.Status" class="form-label"></label>
+                <select asp-for="Habit.Status" asp-items="Html.GetEnumSelectList<HabitStatus>()" class="form-select"></select>
+                <span asp-validation-for="Habit.Status" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="Habit.KanbanStatus" class="form-label"></label>
+                <select asp-for="Habit.KanbanStatus" asp-items="Html.GetEnumSelectList<KanbanStatus>()" class="form-select"></select>
+                <span asp-validation-for="Habit.KanbanStatus" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Habit.StartDate" class="form-label"></label>
+                <input asp-for="Habit.StartDate" class="form-control" type="date" />
+                <span asp-validation-for="Habit.StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Habit.EndDate" class="form-label"></label>
+                <input asp-for="Habit.EndDate" class="form-control" type="date" />
+                <span asp-validation-for="Habit.EndDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions mt-3">
+            <button type="submit" class="btn btn-primary">Save Habit</button>
+            <a asp-page="/Habits/Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const voiceBtn = document.getElementById("btn-voice-input");
+            const voiceStatus = document.getElementById("voice-status");
+            const voiceError = document.getElementById("voice-error");
+            
+            // CONFIGURATION: Set your FastAPI voice extraction service endpoint here.
+            // By default, FastAPI service runs on port 8000.
+            const VOICE_SERVICE_URL = "http://localhost:8000/extract-habit";
+
+            if (!SpeechRecognition) {
+                voiceBtn.disabled = true;
+                voiceBtn.classList.add("disabled");
+                voiceBtn.title = "Speech recognition is not supported by your browser (e.g. Firefox). Please use Chrome, Edge or Safari.";
+                
+                const helpText = document.createElement("div");
+                helpText.className = "text-muted small mt-1";
+                helpText.innerText = "Voice input requires a browser with Web Speech API support (Chrome/Edge/Safari).";
+                voiceBtn.parentNode.appendChild(helpText);
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            let isListening = false;
+
+            voiceBtn.addEventListener("click", function () {
+                if (isListening) {
+                    recognition.stop();
+                    return;
+                }
+
+                voiceError.classList.add("d-none");
+                voiceError.innerText = "";
+                
+                try {
+                    recognition.start();
+                } catch (e) {
+                    showError("Could not start speech recognition: " + e.message);
+                }
+            });
+
+            recognition.onstart = function () {
+                isListening = true;
+                voiceBtn.innerHTML = '<i class="bi bi-stop-fill text-danger"></i> <span>Stop Listening</span>';
+                voiceBtn.classList.replace("btn-outline-primary", "btn-danger");
+                voiceStatus.classList.remove("d-none");
+                voiceStatus.innerText = "Listening...";
+                voiceStatus.classList.replace("bg-secondary", "bg-danger");
+            };
+
+            recognition.onend = function () {
+                isListening = false;
+                voiceBtn.innerHTML = '<i class="bi bi-mic"></i> <span>Start Listening</span>';
+                voiceBtn.classList.replace("btn-danger", "btn-outline-primary");
+                voiceStatus.classList.replace("bg-danger", "bg-secondary");
+                voiceStatus.classList.add("d-none");
+            };
+
+            recognition.onerror = function (event) {
+                console.error("Speech recognition error:", event.error);
+                if (event.error === 'not-allowed') {
+                    showError("Microphone permission denied.");
+                } else if (event.error === 'no-speech') {
+                    showError("No speech detected. Please try again.");
+                } else {
+                    showError("Speech recognition error: " + event.error);
+                }
+            };
+
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript;
+                console.log("Transcribed text:", transcript);
+                sendToExtractionService(transcript);
+            };
+
+            function showError(msg) {
+                voiceError.innerText = msg;
+                voiceError.classList.remove("d-none");
+            }
+
+            function sendToExtractionService(transcriptText) {
+                voiceStatus.classList.remove("d-none");
+                voiceStatus.innerText = "Extracting details...";
+                voiceStatus.classList.replace("bg-danger", "bg-primary");
+
+                fetch(VOICE_SERVICE_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ transcript: transcriptText })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("API responded with status " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Extracted habit data:", data);
+                    
+                    let filledFields = [];
+
+                    if (data.Title) {
+                        const el = document.getElementById("Habit_Title");
+                        if (el) { el.value = data.Title; filledFields.push("Title"); }
+                    }
+                    if (data.Description) {
+                        const el = document.getElementById("Habit_Description");
+                        if (el) { el.value = data.Description; filledFields.push("Description"); }
+                    }
+                    if (data.Frequency !== null && data.Frequency !== undefined) {
+                        const el = document.getElementById("Habit_Frequency");
+                        if (el) { el.value = data.Frequency.toString(); filledFields.push("Frequency"); }
+                    }
+                    if (data.Status !== null && data.Status !== undefined) {
+                        const el = document.getElementById("Habit_Status");
+                        if (el) { el.value = data.Status.toString(); }
+                    }
+                    if (data.KanbanStatus !== null && data.KanbanStatus !== undefined) {
+                        const el = document.getElementById("Habit_KanbanStatus");
+                        if (el) { el.value = data.KanbanStatus.toString(); }
+                    }
+                    if (data.StartDate) {
+                        const el = document.getElementById("Habit_StartDate");
+                        if (el) { el.value = data.StartDate.split('T')[0]; filledFields.push("StartDate"); }
+                    }
+                    if (data.EndDate) {
+                        const el = document.getElementById("Habit_EndDate");
+                        if (el) { el.value = data.EndDate.split('T')[0]; filledFields.push("EndDate"); }
+                    }
+
+                    voiceStatus.classList.replace("bg-primary", "bg-success");
+                    if (filledFields.length > 0) {
+                        voiceStatus.innerText = "Filled from voice";
+                        // Visual confirmation: flash filled fields momentarily
+                        filledFields.forEach(f => {
+                            const inputEl = document.getElementById("Habit_" + f);
+                            if (inputEl) {
+                                inputEl.classList.add("is-valid");
+                                setTimeout(() => { inputEl.classList.remove("is-valid"); }, 3000);
+                            }
+                        });
+                    } else {
+                        voiceStatus.innerText = "No info extracted";
+                    }
+                    
+                    setTimeout(() => { voiceStatus.classList.add("d-none"); }, 4000);
+                })
+                .catch(error => {
+                    console.error("Error communicating with Voice Service:", error);
+                    showError("Could not reach Voice Extraction service. Please make sure the Python FastAPI service is running locally at " + VOICE_SERVICE_URL);
+                    voiceStatus.classList.add("d-none");
+                });
+            }
+        });
+    </script>
+}

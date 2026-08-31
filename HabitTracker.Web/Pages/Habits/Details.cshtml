@@ -1,0 +1,60 @@
+@page "{id:int}"
+@model HabitTracker.Web.Pages.Habits.DetailsModel
+@{
+    ViewData["Title"] = "Habit Details";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Habit Details</h1>
+        <p class="mb-0">Full record view for "@Model.Habit.Title".</p>
+    </div>
+</div>
+
+<div class="panel mb-4">
+    <div class="detail-grid">
+        <div class="detail-card">
+            <div class="detail-label">Title</div>
+            <div class="detail-value">@Model.Habit.Title</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Description</div>
+            <div class="detail-value">@(string.IsNullOrWhiteSpace(Model.Habit.Description) ? "No description provided." : Model.Habit.Description)</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Frequency</div>
+            <div class="detail-value">@Model.Habit.Frequency</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+                <span class="badge-soft @(Model.Habit.Status == HabitStatus.Completed ? "badge-soft-success" : Model.Habit.Status == HabitStatus.Paused ? "badge-soft-warning" : "badge-soft-primary")">
+                    @Model.Habit.Status
+                </span>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Kanban Status</div>
+            <div class="detail-value">@Model.Habit.KanbanStatus</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Start Date</div>
+            <div class="detail-value">@Model.Habit.StartDate.ToLongDateString()</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">End Date</div>
+            <div class="detail-value">@(Model.Habit.EndDate?.ToLongDateString() ?? "Ongoing (No end date)")</div>
+        </div>
+    </div>
+
+    <div class="action-row mt-4">
+        <a asp-page="/Habits/Edit" asp-route-id="@Model.Habit.Id" class="btn btn-primary">Edit Habit</a>
+        <a asp-page="/Habits/Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>

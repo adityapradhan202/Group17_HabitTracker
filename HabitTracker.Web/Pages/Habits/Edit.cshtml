@@ -1,0 +1,76 @@
+@page "{id:int}"
+@model HabitTracker.Web.Pages.Habits.EditModel
+@{
+    ViewData["Title"] = "Edit Habit";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Edit Habit</h1>
+        <p class="mb-0">Modify routine title, frequency, status, or start/end schedule.</p>
+    </div>
+</div>
+
+<div class="auth-card">
+    <form method="post" asp-route-id="@Model.Habit.Id">
+        <input type="hidden" asp-for="Habit.Id" />
+        <input type="hidden" asp-for="Habit.UserId" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Habit.Title" class="form-label"></label>
+            <input asp-for="Habit.Title" class="form-control" />
+            <span asp-validation-for="Habit.Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Habit.Description" class="form-label"></label>
+            <textarea asp-for="Habit.Description" class="form-control"></textarea>
+            <span asp-validation-for="Habit.Description" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Habit.Frequency" class="form-label"></label>
+                <select asp-for="Habit.Frequency" asp-items="Html.GetEnumSelectList<Frequency>()" class="form-select"></select>
+                <span asp-validation-for="Habit.Frequency" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="Habit.Status" class="form-label"></label>
+                <select asp-for="Habit.Status" asp-items="Html.GetEnumSelectList<HabitStatus>()" class="form-select"></select>
+                <span asp-validation-for="Habit.Status" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="Habit.KanbanStatus" class="form-label"></label>
+                <select asp-for="Habit.KanbanStatus" asp-items="Html.GetEnumSelectList<KanbanStatus>()" class="form-select"></select>
+                <span asp-validation-for="Habit.KanbanStatus" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Habit.StartDate" class="form-label"></label>
+                <input asp-for="Habit.StartDate" class="form-control" type="date" />
+                <span asp-validation-for="Habit.StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Habit.EndDate" class="form-label"></label>
+                <input asp-for="Habit.EndDate" class="form-control" type="date" />
+                <span asp-validation-for="Habit.EndDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions mt-3">
+            <button type="submit" class="btn btn-primary">Update Habit</button>
+            <a asp-page="/Habits/Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

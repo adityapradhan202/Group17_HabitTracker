@@ -1,0 +1,42 @@
+@page "{id:int}"
+@model HabitTracker.Web.Pages.Habits.DeleteModel
+@{
+    ViewData["Title"] = "Delete Habit";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Delete Habit</h1>
+        <p class="mb-0">Are you sure you want to delete this habit?</p>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="alert alert-soft-danger mb-4">
+        <strong>Warning:</strong> Deleting this habit will permanently remove all logs associated with it.
+    </div>
+
+    <div class="detail-grid mb-4">
+        <div class="detail-card">
+            <div class="detail-label">Title</div>
+            <div class="detail-value">@Model.Habit.Title</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Frequency</div>
+            <div class="detail-value">@Model.Habit.Frequency</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">@Model.Habit.Status</div>
+        </div>
+    </div>
+
+    <form method="post" asp-route-id="@Model.Habit.Id">
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            <a asp-page="/Habits/Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
