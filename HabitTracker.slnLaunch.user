@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "HabitTracker.Api\\HabitTracker.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "HabitTracker.Web\\HabitTracker.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

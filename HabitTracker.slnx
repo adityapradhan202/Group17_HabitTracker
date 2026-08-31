@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HabitTracker.Api/HabitTracker.Api.csproj" />
+  <Project Path="HabitTracker.Web/HabitTracker.Web.csproj" />
+</Solution>
