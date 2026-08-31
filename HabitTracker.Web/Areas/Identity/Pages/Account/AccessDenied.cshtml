@@ -1,0 +1,17 @@
+@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="page-intro">
+    <div>
+        <h1 class="text-danger">Access denied</h1>
+        <p class="mb-0">You do not have access to this resource.</p>
+    </div>
+</div>
+
+<div class="panel">
+    <p>Please contact an administrator if you believe you should have access to this area.</p>
+    <a asp-page="/Index" class="btn btn-primary">Return Home</a>
+</div>

@@ -1,0 +1,136 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Welcome back</h1>
+        <p class="mb-0">
+            Access your habits, review calendar progress, and continue your workflow in one clean workspace.
+        </p>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+
+    <div class="col-12">
+        <section class="panel auth-hero-panel">
+            <div class="text-soft mb-2">HabitTracker</div>
+            <h2 class="auth-hero-title">Build better habits with a cleaner daily flow.</h2>
+            <p class="auth-hero-text mb-0">
+                Track routines, review calendar progress, and keep your work organized in one simple dashboard.
+            </p>
+        </section>
+    </div>
+
+    <div class="col-12">
+        <div class="summary-grid auth-feature-grid">
+            <div class="stat-card">
+                <div class="stat-label">Personal tracking</div>
+                <div class="stat-value">📝</div>
+                <div class="stat-hint">Manage your own habits in a focused workspace</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Monthly calendar</div>
+                <div class="stat-value">📅</div>
+                <div class="stat-hint">Review consistency and progress over time</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Kanban workflow</div>
+                <div class="stat-value">🧩</div>
+                <div class="stat-hint">Move habits visually through progress stages</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Role-based access</div>
+                <div class="stat-value">🛡️</div>
+                <div class="stat-hint">Separate regular user and admin functionality</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <section class="panel auth-form-panel">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5">
+                    <div class="text-soft mb-2">Welcome back</div>
+                    <h2 class="mb-2">Sign in to your account</h2>
+                    <p class="mb-0">
+                        Use your local account credentials to continue.
+                    </p>
+                </div>
+
+                <div class="col-lg-7">
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input asp-for="Input.Email"
+                                   class="form-control"
+                                   autocomplete="username"
+                                   placeholder="Enter your email" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label"></label>
+                            <input asp-for="Input.Password"
+                                   class="form-control"
+                                   autocomplete="current-password"
+                                   placeholder="Enter your password" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            <label class="form-check-label" asp-for="Input.RememberMe"></label>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <button id="login-submit" type="submit" class="btn btn-primary">
+                                Log In
+                            </button>
+
+                            <a asp-page="./Register"
+                               asp-route-returnUrl="@Model.ReturnUrl"
+                               class="btn btn-outline-primary">
+                                Create account
+                            </a>
+                        </div>
+                    </form>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="stat-card auth-mini-card">
+                                <div class="stat-label">After login</div>
+                                <div class="stat-hint mb-0">
+                                    Open your dashboard, manage habits, and review monthly progress.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="stat-card auth-mini-card">
+                                <div class="stat-label">Secure access</div>
+                                <div class="stat-hint mb-0">
+                                    Protected user-specific access with role-based authorization.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

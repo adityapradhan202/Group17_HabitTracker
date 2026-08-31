@@ -1,0 +1,4 @@
+C:\personal_data_adi\HabitTrackerAspNetMVCWebApp\HabitTracker.Api\obj\Debug\net10.0\staticwebassets.build.json
+C:\personal_data_adi\HabitTrackerAspNetMVCWebApp\HabitTracker.Api\obj\Debug\net10.0\staticwebassets.build.json
+C:\personal_data_adi\HabitTrackerAspNetMVCWebApp\HabitTracker.Api\obj\Debug\net10.0\staticwebassets.build.json
+C:\personal_data_adi\HabitTrackerAspNetMVCWebApp\HabitTracker.Api\obj\Debug\net10.0\staticwebassets.build.json

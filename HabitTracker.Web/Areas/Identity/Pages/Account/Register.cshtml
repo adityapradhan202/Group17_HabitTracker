@@ -1,0 +1,63 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Create an account</h1>
+        <p class="mb-0">
+            Start tracking habits, building consistency, and managing your progress.
+        </p>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-12">
+        <section class="panel auth-form-panel">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5">
+                    <div class="text-soft mb-2">Get started</div>
+                    <h2 class="mb-2">Create your free account</h2>
+                    <p class="mb-0">
+                        Enter your email and password to create a new user account.
+                    </p>
+                </div>
+
+                <div class="col-lg-7">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="name@example.com" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label"></label>
+                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" placeholder="Password" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" placeholder="Confirm password" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button id="registerSubmit" type="submit" class="btn btn-primary">Register</button>
+                            <a asp-page="./Login" class="btn btn-outline-primary">Sign in instead</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
