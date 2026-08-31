@@ -1,0 +1,49 @@
+@page "{id}"
+@model HabitTracker.Web.Pages.AdminUsers.EditModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Edit User</h1>
+        <p class="mb-0">Modify user email, role, and active status.</p>
+    </div>
+</div>
+
+<div class="auth-card">
+    <form method="post" asp-route-id="@Model.UserInput.Id">
+        <input type="hidden" asp-for="UserInput.Id" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="UserInput.Email" class="form-label"></label>
+            <input asp-for="UserInput.Email" class="form-control" />
+            <span asp-validation-for="UserInput.Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserInput.RoleName" class="form-label"></label>
+            <select asp-for="UserInput.RoleName" class="form-select">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <span asp-validation-for="UserInput.RoleName" class="text-danger"></span>
+        </div>
+
+        <div class="form-check mb-4">
+            <input class="form-check-input" asp-for="UserInput.IsActive" />
+            <label class="form-check-label" asp-for="UserInput.IsActive"></label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update User</button>
+            <a asp-page="/AdminUsers/Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
