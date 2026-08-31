@@ -1,0 +1,108 @@
+@page
+@model HabitTracker.Web.Pages.AdminUsers.IndexModel
+@{
+    ViewData["Title"] = "Admin Users";
+    var users = Model.Users;
+    var totalUsers = users.Count;
+    var activeUsers = users.Count(u => u.IsActive);
+    var inactiveUsers = users.Count(u => !u.IsActive);
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Admin Users</h1>
+        <p class="mb-0">Manage user accounts, roles, and activation status from one clean admin screen.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success mb-4">@Model.SuccessMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger mb-4">@Model.ErrorMessage</div>
+}
+
+<div class="action-row">
+    <a asp-page="/AdminUsers/Create" class="btn btn-primary">Create User</a>
+</div>
+
+<div class="summary-grid mb-4">
+    <div class="stat-card">
+        <div class="stat-label">Total users</div>
+        <div class="stat-value">@totalUsers</div>
+        <div class="stat-hint">Accounts in the system</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active users</div>
+        <div class="stat-value">@activeUsers</div>
+        <div class="stat-hint">Can sign in</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Inactive users</div>
+        <div class="stat-value">@inactiveUsers</div>
+        <div class="stat-hint">Blocked from sign in</div>
+    </div>
+</div>
+
+<section class="table-panel">
+    @if (!users.Any())
+    {
+        <div class="empty-state">No users found.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-clean align-middle">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Habit Count</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in users)
+                {
+                    <tr>
+                        <td class="main-cell">@user.Email</td>
+                        <td>@user.RoleName</td>
+                        <td>
+                            @if (user.IsActive)
+                            {
+                                <span class="badge-soft badge-soft-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge-soft badge-soft-danger">Inactive</span>
+                            }
+                        </td>
+                        <td>@user.HabitCount</td>
+                        <td>
+                            <div class="table-actions">
+                                <a asp-page="/AdminUsers/Edit" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-primary">Edit</a>
+
+                                @if (user.IsActive)
+                                {
+                                    <a asp-page="/AdminUsers/Deactivate" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-danger">Deactivate</a>
+                                }
+                                else
+                                {
+                                    <form asp-page-handler="Activate" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@user.UserId" />
+                                        <button type="submit" class="btn btn-sm btn-primary">Activate</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

@@ -1,0 +1,37 @@
+@page "{id}"
+@model HabitTracker.Web.Pages.AdminUsers.DeactivateModel
+@{
+    ViewData["Title"] = "Deactivate User";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Deactivate User</h1>
+        <p class="mb-0">Are you sure you want to deactivate this account?</p>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="alert alert-soft-danger mb-4">
+        <strong>Warning:</strong> Deactivating this user will prevent them from signing in until an administrator re-activates their account.
+    </div>
+
+    <div class="detail-grid mb-4">
+        <div class="detail-card">
+            <div class="detail-label">Email</div>
+            <div class="detail-value">@Model.UserInfo.Email</div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-label">Role</div>
+            <div class="detail-value">@Model.UserInfo.RoleName</div>
+        </div>
+    </div>
+
+    <form method="post" asp-route-id="@Model.UserInfo.UserId">
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Confirm Deactivation</button>
+            <a asp-page="/AdminUsers/Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

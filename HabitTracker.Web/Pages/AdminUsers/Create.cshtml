@@ -1,0 +1,59 @@
+@page
+@model HabitTracker.Web.Pages.AdminUsers.CreateModel
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Create User</h1>
+        <p class="mb-0">Create a new user account with an assigned role.</p>
+    </div>
+</div>
+
+<div class="auth-card">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="UserInput.Email" class="form-label"></label>
+            <input asp-for="UserInput.Email" class="form-control" placeholder="user@example.com" />
+            <span asp-validation-for="UserInput.Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserInput.Password" class="form-label"></label>
+            <input asp-for="UserInput.Password" class="form-control" type="password" />
+            <span asp-validation-for="UserInput.Password" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserInput.ConfirmPassword" class="form-label"></label>
+            <input asp-for="UserInput.ConfirmPassword" class="form-control" type="password" />
+            <span asp-validation-for="UserInput.ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserInput.RoleName" class="form-label"></label>
+            <select asp-for="UserInput.RoleName" class="form-select">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <span asp-validation-for="UserInput.RoleName" class="text-danger"></span>
+        </div>
+
+        <div class="form-check mb-4">
+            <input class="form-check-input" asp-for="UserInput.IsActive" />
+            <label class="form-check-label" asp-for="UserInput.IsActive"></label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+            <a asp-page="/AdminUsers/Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
