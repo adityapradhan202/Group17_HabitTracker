@@ -1,0 +1,145 @@
+@page
+@model HabitTracker.Web.Pages.Kanban.IndexModel
+@{
+    ViewData["Title"] = "Kanban Board";
+    var kanban = Model.Kanban;
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Kanban Board</h1>
+        <p class="mb-0">Today board state is driven by Kanban status. Calendar actions for today sync this board.</p>
+    </div>
+</div>
+
+<div class="kanban-board">
+    <section class="kanban-column">
+        <div class="kanban-column-header">
+            <h3 class="mb-0">Todo</h3>
+            <span class="badge-soft badge-soft-neutral">@kanban.TodoHabits.Count</span>
+        </div>
+
+        @if (kanban.TodoHabits.Any())
+        {
+            @foreach (var habit in kanban.TodoHabits)
+            {
+                <article class="kanban-card">
+                    <h5 class="mb-2 text-wrap-break">@habit.Title</h5>
+                    @if (!string.IsNullOrWhiteSpace(habit.Description))
+                    {
+                        <div class="habit-subtext mb-2 text-wrap-break">@habit.Description</div>
+                    }
+                    <div class="kanban-meta">
+                        <div><strong>Frequency:</strong> @habit.Frequency</div>
+                        <div><strong>Status:</strong> @habit.Status</div>
+                        <div><strong>Start Date:</strong> @habit.StartDate.ToShortDateString()</div>
+                    </div>
+                    <div class="kanban-actions">
+                        <form asp-page-handler="StartToday" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary">Start Today</button>
+                        </form>
+                        <form asp-page-handler="MarkTodayComplete" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-success">Mark Today Complete</button>
+                        </form>
+                        <form asp-page-handler="CompleteHabit" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-dark">Complete Habit</button>
+                        </form>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No habits in Todo.</div>
+        }
+    </section>
+
+    <section class="kanban-column">
+        <div class="kanban-column-header">
+            <h3 class="mb-0">In Progress</h3>
+            <span class="badge-soft badge-soft-primary">@kanban.InProgressHabits.Count</span>
+        </div>
+
+        @if (kanban.InProgressHabits.Any())
+        {
+            @foreach (var habit in kanban.InProgressHabits)
+            {
+                <article class="kanban-card">
+                    <h5 class="mb-2 text-wrap-break">@habit.Title</h5>
+                    @if (!string.IsNullOrWhiteSpace(habit.Description))
+                    {
+                        <div class="habit-subtext mb-2 text-wrap-break">@habit.Description</div>
+                    }
+                    <div class="kanban-meta">
+                        <div><strong>Frequency:</strong> @habit.Frequency</div>
+                        <div><strong>Status:</strong> @habit.Status</div>
+                        <div><strong>Start Date:</strong> @habit.StartDate.ToShortDateString()</div>
+                        <div><strong>Log Entries:</strong> @habit.HabitLogs.Count</div>
+                    </div>
+                    <div class="kanban-actions">
+                        <form asp-page-handler="MarkTodayComplete" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary">Mark Today Complete</button>
+                        </form>
+                        <form asp-page-handler="MoveToTodo" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Move to Todo</button>
+                        </form>
+                        <form asp-page-handler="CompleteHabit" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-dark">Complete Habit</button>
+                        </form>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No habits in progress.</div>
+        }
+    </section>
+
+    <section class="kanban-column">
+        <div class="kanban-column-header">
+            <h3 class="mb-0">Done</h3>
+            <span class="badge-soft badge-soft-success">@kanban.DoneHabits.Count</span>
+        </div>
+
+        @if (kanban.DoneHabits.Any())
+        {
+            @foreach (var habit in kanban.DoneHabits)
+            {
+                <article class="kanban-card">
+                    <h5 class="mb-2 text-wrap-break">@habit.Title</h5>
+                    @if (!string.IsNullOrWhiteSpace(habit.Description))
+                    {
+                        <div class="habit-subtext mb-2 text-wrap-break">@habit.Description</div>
+                    }
+                    <div class="kanban-meta">
+                        <div><strong>Frequency:</strong> @habit.Frequency</div>
+                        <div><strong>Status:</strong> @habit.Status</div>
+                        <div><strong>Start Date:</strong> @habit.StartDate.ToShortDateString()</div>
+                        <div><strong>Log Entries:</strong> @habit.HabitLogs.Count</div>
+                    </div>
+                    <div class="kanban-actions">
+                        <form asp-page-handler="MoveToTodo" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Move to Todo</button>
+                        </form>
+                        <form asp-page-handler="ReopenHabit" method="post">
+                            <input type="hidden" name="id" value="@habit.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Reopen Habit</button>
+                        </form>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No completed habits.</div>
+        }
+    </section>
+</div>

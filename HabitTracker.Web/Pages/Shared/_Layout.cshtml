@@ -1,0 +1,86 @@
+@{
+    var requestPath = Context.Request.Path.Value ?? string.Empty;
+    var isAuthPage = requestPath.StartsWith("/Identity/Account", StringComparison.OrdinalIgnoreCase);
+    var isAdmin = User.IsInRole("Admin");
+    var isUser = User.IsInRole("User") && !isAdmin;
+
+    string NavClass(string pagePath)
+    {
+        var isActive = string.Equals(requestPath, pagePath, StringComparison.OrdinalIgnoreCase) ||
+                       (pagePath != "/" && requestPath.StartsWith(pagePath, StringComparison.OrdinalIgnoreCase));
+        return isActive ? "sidebar-link active" : "sidebar-link";
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HabitTracker</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    @RenderSection("VendorStyles", required: false)
+    @RenderSection("PageStyles", required: false)
+</head>
+<body class="app-body @(isAuthPage ? "auth-body" : string.Empty)">
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div>
+                <a asp-page="@(isAdmin ? "/AdminUsers/Index" : "/Index")" class="app-brand">
+                    <span class="app-brand-mark">HT</span>
+                    <span class="app-brand-text">HabitTracker</span>
+                </a>
+
+                <nav class="sidebar-nav">
+                    @if (isAdmin)
+                    {
+                        <a asp-page="/AdminUsers/Index" class="@NavClass("/AdminUsers")">User Management</a>
+                    }
+                    else
+                    {
+                        <a asp-page="/Index" class="@NavClass("/Index")">Home</a>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-page="/Habits/Index" class="@NavClass("/Habits")">Habits</a>
+                            <a asp-page="/Calendar/Index" class="@NavClass("/Calendar")">Calendar</a>
+                            <a asp-page="/Kanban/Index" class="@NavClass("/Kanban")">Kanban</a>
+                        }
+
+                        <a asp-page="/Privacy" class="@NavClass("/Privacy")">Privacy</a>
+                    }
+                </nav>               
+            </div>
+
+            <div class="sidebar-footer">
+                <partial name="_LoginPartial" />
+            </div>
+        </aside>
+
+        <div class="app-main">
+            <header class="app-header">
+                <div class="app-header-title">@ViewData["Title"]</div>
+            </header>
+
+            <main class="app-content">
+                <div class="page-container @(isAuthPage ? "page-container-auth" : string.Empty)">
+                    @RenderBody()
+                </div>
+            </main>
+
+            <footer class="app-footer">
+                <span>&copy; 2026 HabitTracker</span>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+    @RenderSection("VendorScripts", required: false)
+    @RenderSection("PageScripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

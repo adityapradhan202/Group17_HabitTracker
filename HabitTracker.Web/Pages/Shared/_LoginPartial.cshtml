@@ -1,0 +1,27 @@
+@using HabitTracker.Api.Models
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="auth-box">
+        <div class="auth-meta">Signed in as</div>
+        <div class="auth-user">@User.Identity?.Name</div>
+
+        <form asp-area="Identity"
+              asp-page="/Account/Logout"
+              asp-route-returnUrl="/"
+              method="post"
+              class="mt-3">
+            <button type="submit" class="btn btn-outline-danger w-100">Logout</button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="auth-box auth-box-actions">
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100">Login</a>
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary w-100">Register</a>
+    </div>
+}

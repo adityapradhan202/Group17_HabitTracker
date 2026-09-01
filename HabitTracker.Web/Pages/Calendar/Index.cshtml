@@ -1,0 +1,224 @@
+@page
+@model HabitTracker.Web.Pages.Calendar.IndexModel
+@{
+    ViewData["Title"] = "Calendar";
+    var today = DateTime.Today;
+    var calendar = Model.Calendar;
+    var isCurrentDisplayedMonth = calendar.Year == today.Year && calendar.Month == today.Month;
+    var currentMonthDays = calendar.Days.Where(d => d.IsCurrentMonth).ToList();
+    var plannedCount = currentMonthDays.SelectMany(d => d.PlannedHabits).Select(h => h.HabitId).Distinct().Count();
+    var completedCount = currentMonthDays.Sum(d => d.CompletedHabits.Count);
+    var partialCount = currentMonthDays.Sum(d => d.PartialHabits.Count);
+    var skippedCount = currentMonthDays.Sum(d => d.SkippedHabits.Count);
+}
+
+<div class="page-intro">
+    <div>
+        <h1>Calendar</h1>
+        <p class="mb-0">Monthly habit execution in a clearer grid with compact day cards and cleaner actions.</p>
+    </div>
+</div>
+
+<div class="summary-grid mb-4">
+    <div class="stat-card">
+        <div class="stat-label">Month</div>
+        <div class="stat-value" style="font-size:1.35rem;">@calendar.MonthName</div>
+        <div class="stat-hint">Current tracking period</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Planned habits</div>
+        <div class="stat-value">@plannedCount</div>
+        <div class="stat-hint">Distinct habits planned this month</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed items</div>
+        <div class="stat-value">@completedCount</div>
+        <div class="stat-hint">Finished occurrences for the month</div>
+    </div>
+</div>
+
+<section class="calendar-summary mb-4">
+    <div class="calendar-toolbar">
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-page="/Calendar/Index" asp-route-year="@calendar.PrevYear" asp-route-month="@calendar.PrevMonth" class="btn btn-outline-primary">Previous</a>
+            <a asp-page="/Calendar/Index" asp-route-year="@today.Year" asp-route-month="@today.Month" class="btn btn-outline-secondary">Current Month</a>
+        </div>
+
+        <h2 class="mb-0">@calendar.MonthName</h2>
+
+        <div class="d-flex flex-wrap gap-2 justify-content-end">
+            @if (isCurrentDisplayedMonth)
+            {
+                <form asp-page-handler="MarkAllForTodayCompleted" method="post">
+                    <input type="hidden" name="year" value="@calendar.Year" />
+                    <input type="hidden" name="month" value="@calendar.Month" />
+                    <button type="submit" class="btn btn-success">Mark All for Today Completed</button>
+                </form>
+            }
+            <a asp-page="/Calendar/Index" asp-route-year="@calendar.NextYear" asp-route-month="@calendar.NextMonth" class="btn btn-outline-primary">Next</a>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <span class="badge-soft badge-soft-warning">Partial: @partialCount</span>
+        <span class="badge-soft badge-soft-success">Completed: @completedCount</span>
+        <span class="badge-soft badge-soft-danger">Skipped: @skippedCount</span>
+        <span class="badge-soft badge-soft-neutral">Planned: @plannedCount</span>
+    </div>
+</section>
+
+<div class="calendar-grid mb-3">
+    <div class="calendar-weekday">Mon</div>
+    <div class="calendar-weekday">Tue</div>
+    <div class="calendar-weekday">Wed</div>
+    <div class="calendar-weekday">Thu</div>
+    <div class="calendar-weekday">Fri</div>
+    <div class="calendar-weekday">Sat</div>
+    <div class="calendar-weekday">Sun</div>
+</div>
+
+<div class="calendar-grid">
+@foreach (var day in calendar.Days)
+{
+    var dayClass = "calendar-day";
+    if (!day.IsCurrentMonth)
+    {
+        dayClass += " other-month";
+    }
+    if (day.IsToday)
+    {
+        dayClass += " today";
+    }
+
+    <section class="@dayClass">
+        <div class="calendar-day-header">
+            <div class="calendar-day-number">@day.Date.Day</div>
+            @if (day.IsToday)
+            {
+                <span class="badge-soft badge-soft-primary">Today</span>
+            }
+        </div>
+
+        <div class="calendar-section-title">Planned</div>
+        @if (day.PlannedHabits.Any())
+        {
+            @foreach (var habit in day.PlannedHabits)
+            {
+                <div class="calendar-item calendar-item-planned">
+                    <div class="calendar-item-title">@habit.Title</div>
+                    @if (habit.CurrentStatus.HasValue)
+                    {
+                        <div class="mt-1">
+                            @if (habit.CurrentStatus.ToString() == "Completed")
+                            {
+                                <span class="calendar-status-badge calendar-status-success">Completed</span>
+                            }
+                            else if (habit.CurrentStatus.ToString() == "PartiallyCompleted")
+                            {
+                                <span class="calendar-status-badge calendar-status-warning">Partial</span>
+                            }
+                            else if (habit.CurrentStatus.ToString() == "Skipped")
+                            {
+                                <span class="calendar-status-badge calendar-status-danger">Skipped</span>
+                            }
+                            else
+                            {
+                                <span class="calendar-status-badge calendar-status-neutral">
+                                    @habit.CurrentStatus
+                                </span>
+                            }
+                        </div>
+                    }
+                    <div class="calendar-actions">
+                        <form asp-page-handler="SetHabitLog" method="post" class="calendar-action-form">
+                            <input type="hidden" name="habitId" value="@habit.HabitId" />
+                            <input type="hidden" name="date" value="@day.Date.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="status" value="@HabitLogStatus.Completed" />
+                            <input type="hidden" name="year" value="@calendar.Year" />
+                            <input type="hidden" name="month" value="@calendar.Month" />
+                            <button type="submit" class="calendar-badge-btn calendar-badge-success" title="Complete" aria-label="Complete">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </form>
+
+                        <form asp-page-handler="SetHabitLog" method="post" class="calendar-action-form">
+                            <input type="hidden" name="habitId" value="@habit.HabitId" />
+                            <input type="hidden" name="date" value="@day.Date.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="status" value="@HabitLogStatus.PartiallyCompleted" />
+                            <input type="hidden" name="year" value="@calendar.Year" />
+                            <input type="hidden" name="month" value="@calendar.Month" />
+                            <button type="submit" class="calendar-badge-btn calendar-badge-warning" title="Partial" aria-label="Partial">
+                                <i class="bi bi-pause-fill"></i>
+                            </button>
+                        </form>
+
+                        <form asp-page-handler="SetHabitLog" method="post" class="calendar-action-form">
+                            <input type="hidden" name="habitId" value="@habit.HabitId" />
+                            <input type="hidden" name="date" value="@day.Date.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="status" value="@HabitLogStatus.Skipped" />
+                            <input type="hidden" name="year" value="@calendar.Year" />
+                            <input type="hidden" name="month" value="@calendar.Month" />
+                            <button type="submit" class="calendar-badge-btn calendar-badge-danger" title="Skip" aria-label="Skip">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </form>
+
+                        <form asp-page-handler="ClearHabitLog" method="post" class="calendar-action-form">
+                            <input type="hidden" name="habitId" value="@habit.HabitId" />
+                            <input type="hidden" name="date" value="@day.Date.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="year" value="@calendar.Year" />
+                            <input type="hidden" name="month" value="@calendar.Month" />
+                            <button type="submit" class="calendar-badge-btn calendar-badge-secondary" title="Clear" aria-label="Clear">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="habit-subtext">No planned habits</div>
+        }
+
+        <div class="calendar-section-title">Partial</div>
+        @if (day.PartialHabits.Any())
+        {
+            @foreach (var habit in day.PartialHabits)
+            {
+                <div class="calendar-item calendar-item-partial">@habit.Title</div>
+            }
+        }
+        else
+        {
+            <div class="habit-subtext">None</div>
+        }
+
+        <div class="calendar-section-title">Completed</div>
+        @if (day.CompletedHabits.Any())
+        {
+            @foreach (var habit in day.CompletedHabits)
+            {
+                <div class="calendar-item calendar-item-complete">@habit.Title</div>
+            }
+        }
+        else
+        {
+            <div class="habit-subtext">None</div>
+        }
+
+        <div class="calendar-section-title">Skipped</div>
+        @if (day.SkippedHabits.Any())
+        {
+            @foreach (var habit in day.SkippedHabits)
+            {
+                <div class="calendar-item calendar-item-skip">@habit.Title</div>
+            }
+        }
+        else
+        {
+            <div class="habit-subtext">None</div>
+        }
+    </section>
+}
+</div>
